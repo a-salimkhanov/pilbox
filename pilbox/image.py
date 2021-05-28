@@ -74,7 +74,7 @@ class Image(object):
     MODES = ["adapt", "clip", "crop", "fill", "scale"]
     POSITIONS = _positions_to_ratios.keys()
 
-    _DEFAULTS = dict(background="0fff", expand=False, filter="antialias",
+    _DEFAULTS = dict(background="", expand=False, filter="antialias",
                      format=None, mode="crop", optimize=False,
                      position="center", quality=90, progressive=False,
                      retain=75, preserve_exif=False)
@@ -143,8 +143,8 @@ class Image(object):
                 and not opts["pil"]["position"]:
             raise errors.PositionError(
                 "Invalid position: %s" % opts["position"])
-        elif not Image._isint(opts["background"], 16) \
-                or len(opts["background"]) not in [3, 4, 6, 8]:
+        elif opts['background'] and (not Image._isint(opts["background"], 16) \
+                or len(opts["background"]) not in [3, 4, 6, 8]):
             raise errors.BackgroundError(
                 "Invalid background: %s" % opts["background"])
         elif opts["optimize"] and not Image._isint(opts["optimize"]):
@@ -266,11 +266,15 @@ class Image(object):
 
         if int(opts["preserve_exif"]):
             save_kwargs["exif"] = self._exif
-
-        color = color_hex_to_dec_tuple(opts["background"])
+        if (opts['background']):
+            color = color_hex_to_dec_tuple(opts["background"])
 
         if self.img.mode == "RGBA":
-            self._background(fmt, color)
+            if opts['background']:
+                self._background(fmt, color)
+            else:
+                img_info = self.img.info
+                save_kwargs = { **save_kwargs, ** img_info}
 
         if fmt == "JPEG":
             if self.img.mode == "P":
