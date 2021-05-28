@@ -28,9 +28,9 @@ import tornado.options
 import tornado.web
 from tornado.options import define, options, parse_config_file
 
-from pilbox import errors
-from pilbox.image import Image
-from pilbox.signature import verify_signature
+import errors
+from image import Image
+from signature import verify_signature
 
 try:
     from urlparse import urlparse, urljoin

@@ -24,7 +24,7 @@ import os.path
 import PIL.Image
 import PIL.ImageOps
 
-from pilbox import errors
+import errors
 
 try:
     from io import BytesIO
